@@ -1,0 +1,48 @@
+<main class="task-app">
+  <header class="task-app__header">
+    <p class="task-app__eyebrow">MY DAY</p>
+    <h1>Task list</h1>
+    <p class="task-app__subtitle">A little progress adds up.</p>
+  </header>
+
+  <form class="task-form" (submit)="$event.preventDefault(); addTask(taskInput.value); taskInput.value = ''">
+    <label class="visually-hidden" for="new-task">Add a task</label>
+    <input
+      #taskInput
+      id="new-task"
+      type="text"
+      placeholder="What needs to get done?"
+      autocomplete="off"
+    />
+    <button type="submit">Add task</button>
+  </form>
+
+  <section class="task-list" aria-label="Tasks">
+    <p class="task-list__empty" *ngIf="tasks.length === 0">
+      No tasks yet. Add one above to get started.
+    </p>
+
+    <article class="task" *ngFor="let task of tasks; let i = index">
+      <label class="task__content">
+        <input
+          type="checkbox"
+          [checked]="task.completed"
+          (change)="toggleTask(i)"
+        />
+        <span [class.task__text--completed]="task.completed">{{ task.title }}</span>
+      </label>
+      <button
+        class="task__remove"
+        type="button"
+        [attr.aria-label]="'Remove ' + task.title"
+        (click)="removeTask(i)"
+      >
+        Remove
+      </button>
+    </article>
+  </section>
+
+  <footer class="task-app__footer" *ngIf="tasks.length > 0">
+    {{ tasks.length }} {{ tasks.length === 1 ? 'task' : 'tasks' }}
+  </footer>
+</main>
