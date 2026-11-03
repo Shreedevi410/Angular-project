@@ -81,6 +81,40 @@
   background: #5046c5;
 }
 
+.task-filters {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.task-filters button {
+  padding: 8px 12px;
+  border: 1px solid #dfe3ed;
+  border-radius: 8px;
+  background: #fff;
+  color: #626b7e;
+  font: inherit;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+}
+
+.task-filters button:hover {
+  border-color: #bcb7ef;
+  color: #5046c5;
+}
+
+.task-filters button:focus-visible {
+  outline: 3px solid rgb(98 88 217 / 30%);
+  outline-offset: 2px;
+}
+
+.task-filters .task-filters__button--selected {
+  border-color: #6258d9;
+  background: #6258d9;
+  color: #fff;
+}
+
 .task-list {
   border-top: 1px solid #edf0f5;
 }
@@ -172,5 +206,9 @@
 
   .task-form button {
     width: 100%;
+  }
+
+  .task-filters {
+    justify-content: center;
   }
 }
