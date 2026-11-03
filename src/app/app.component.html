@@ -17,29 +17,62 @@
     <button type="submit">Add task</button>
   </form>
 
+  <nav class="task-filters" aria-label="Filter tasks">
+    <button
+      type="button"
+      [class.task-filters__button--selected]="taskFilter === 'all'"
+      [attr.aria-pressed]="taskFilter === 'all'"
+      (click)="taskFilter = 'all'"
+    >
+      All
+    </button>
+    <button
+      type="button"
+      [class.task-filters__button--selected]="taskFilter === 'active'"
+      [attr.aria-pressed]="taskFilter === 'active'"
+      (click)="taskFilter = 'active'"
+    >
+      Active
+    </button>
+    <button
+      type="button"
+      [class.task-filters__button--selected]="taskFilter === 'completed'"
+      [attr.aria-pressed]="taskFilter === 'completed'"
+      (click)="taskFilter = 'completed'"
+    >
+      Completed
+    </button>
+  </nav>
+
   <section class="task-list" aria-label="Tasks">
     <p class="task-list__empty" *ngIf="tasks.length === 0">
       No tasks yet. Add one above to get started.
     </p>
 
-    <article class="task" *ngFor="let task of tasks; let i = index">
-      <label class="task__content">
-        <input
-          type="checkbox"
-          [checked]="task.completed"
-          (change)="toggleTask(i)"
-        />
-        <span [class.task__text--completed]="task.completed">{{ task.title }}</span>
-      </label>
-      <button
-        class="task__remove"
-        type="button"
-        [attr.aria-label]="'Remove ' + task.title"
-        (click)="removeTask(i)"
-      >
-        Remove
-      </button>
-    </article>
+    <p class="task-list__empty" *ngIf="tasks.length > 0 && visibleTaskCount === 0">
+      No {{ taskFilter }} tasks.
+    </p>
+
+    <ng-container *ngFor="let task of tasks; let i = index">
+      <article class="task" *ngIf="isTaskVisible(task)">
+        <label class="task__content">
+          <input
+            type="checkbox"
+            [checked]="task.completed"
+            (change)="toggleTask(i)"
+          />
+          <span [class.task__text--completed]="task.completed">{{ task.title }}</span>
+        </label>
+        <button
+          class="task__remove"
+          type="button"
+          [attr.aria-label]="'Remove ' + task.title"
+          (click)="removeTask(i)"
+        >
+          Remove
+        </button>
+      </article>
+    </ng-container>
   </section>
 
   <footer class="task-app__footer" *ngIf="tasks.length > 0">
