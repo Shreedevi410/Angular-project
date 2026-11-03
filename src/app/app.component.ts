@@ -55,6 +55,14 @@ export class AppComponent {
     this.saveTasks();
   }
 
+  clearCompletedTasks(): void {
+    const remainingTasks = this.tasks.filter((task) => !task.completed);
+    if (remainingTasks.length !== this.tasks.length) {
+      this.tasks = remainingTasks;
+      this.saveTasks();
+    }
+  }
+
   private loadTasks(): Task[] {
     if (typeof window === 'undefined') {
       return [];
