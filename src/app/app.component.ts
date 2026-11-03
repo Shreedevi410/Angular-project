@@ -6,6 +6,8 @@ interface Task {
   completed: boolean;
 }
 
+type TaskFilter = 'all' | 'active' | 'completed';
+
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -15,7 +17,20 @@ interface Task {
 })
 export class AppComponent {
   private readonly storageKey = 'angular-task-list.tasks';
+  taskFilter: TaskFilter = 'all';
   tasks: Task[] = this.loadTasks();
+
+  isTaskVisible(task: Task): boolean {
+    return (
+      this.taskFilter === 'all' ||
+      (this.taskFilter === 'active' && !task.completed) ||
+      (this.taskFilter === 'completed' && task.completed)
+    );
+  }
+
+  get visibleTaskCount(): number {
+    return this.tasks.filter((task) => this.isTaskVisible(task)).length;
+  }
 
   addTask(title: string): void {
     const trimmedTitle = title.trim();
