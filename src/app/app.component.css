@@ -47,20 +47,6 @@
   margin-bottom: 24px;
 }
 
-.task-search {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-bottom: 20px;
-}
-
-.task-search__label {
-  color: #5a6376;
-  font-size: 0.8rem;
-  font-weight: 600;
-}
-
-.task-search input,
 .task-form input {
   flex: 1;
   min-width: 0;
@@ -71,7 +57,6 @@
   font: inherit;
 }
 
-.task-search input:focus,
 .task-form input:focus,
 .task-form button:focus-visible,
 .task__remove:focus-visible,
