@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
 interface Task {
   title: string;
@@ -11,7 +12,7 @@ type TaskFilter = 'all' | 'active' | 'completed';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
 })
@@ -19,8 +20,17 @@ export class AppComponent {
   private readonly storageKey = 'angular-task-list.tasks';
   taskFilter: TaskFilter = 'all';
   tasks: Task[] = this.loadTasks();
+  searchTerm = '';
 
   isTaskVisible(task: Task): boolean {
+    const matchesSearch =
+      this.searchTerm.trim().length === 0 ||
+      task.title.toLowerCase().includes(this.searchTerm.trim().toLowerCase());
+
+    if (!matchesSearch) {
+      return false;
+    }
+
     return (
       this.taskFilter === 'all' ||
       (this.taskFilter === 'active' && !task.completed) ||
