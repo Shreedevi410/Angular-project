@@ -130,6 +130,21 @@
   color: #fff;
 }
 
+.task-toolbar {
+  margin-bottom: 18px;
+}
+
+.task-toolbar__toggle {
+  padding: 8px 12px;
+  border: 1px solid #dfe3ed;
+  border-radius: 8px;
+  background: #f3f4ff;
+  color: #4f46e5;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
 .task-list {
   border-top: 1px solid #edf0f5;
 }
@@ -180,16 +195,47 @@
   text-decoration: line-through;
 }
 
+.task__edit-input {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #dfe3ed;
+  border-radius: 8px;
+  font: inherit;
+}
+
+.task__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.task__edit,
+.task__save,
+.task__cancel,
 .task__remove {
   flex: none;
   padding: 6px 8px;
   border: 0;
   border-radius: 6px;
   background: transparent;
-  color: #8a5360;
   font: inherit;
   font-size: 0.875rem;
   cursor: pointer;
+}
+
+.task__edit,
+.task__save {
+  background: #eef2ff;
+  color: #3b46b0;
+}
+
+.task__cancel {
+  background: #f3f4f6;
+  color: #4b5563;
+}
+
+.task__remove {
+  color: #8a5360;
 }
 
 .task__remove:hover {
