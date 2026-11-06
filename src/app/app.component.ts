@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
 interface Task {
   title: string;
@@ -20,6 +21,8 @@ export class AppComponent {
   taskFilter: TaskFilter = 'all';
   tasks: Task[] = this.loadTasks();
   searchTerm = '';
+  editingTaskIndex: number | null = null;
+  draftTaskTitle = '';
 
   isTaskVisible(task: Task): boolean {
     const matchesSearch = task.title
@@ -35,6 +38,10 @@ export class AppComponent {
 
   get visibleTaskCount(): number {
     return this.tasks.filter((task) => this.isTaskVisible(task)).length;
+  }
+
+  get allTasksCompleted(): boolean {
+    return this.tasks.length > 0 && this.tasks.every((task) => task.completed);
   }
 
   addTask(title: string): void {
@@ -53,6 +60,45 @@ export class AppComponent {
       task.completed = !task.completed;
       this.saveTasks();
     }
+  }
+
+  toggleAllTasks(): void {
+    const shouldComplete = !this.allTasksCompleted;
+    this.tasks = this.tasks.map((task) => ({
+      ...task,
+      completed: shouldComplete,
+    }));
+    this.saveTasks();
+  }
+
+  startEditingTask(index: number): void {
+    const task = this.tasks[index];
+    if (!task) {
+      return;
+    }
+
+    this.editingTaskIndex = index;
+    this.draftTaskTitle = task.title;
+  }
+
+  saveEditedTask(index: number): void {
+    const trimmedTitle = this.draftTaskTitle.trim();
+    const task = this.tasks[index];
+
+    if (!task || !trimmedTitle) {
+      this.cancelEditingTask();
+      return;
+    }
+
+    task.title = trimmedTitle;
+    this.editingTaskIndex = null;
+    this.draftTaskTitle = '';
+    this.saveTasks();
+  }
+
+  cancelEditingTask(): void {
+    this.editingTaskIndex = null;
+    this.draftTaskTitle = '';
   }
 
   removeTask(index: number): void {

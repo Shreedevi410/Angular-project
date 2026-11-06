@@ -44,6 +44,12 @@
     </button>
   </nav>
 
+  <div class="task-toolbar" *ngIf="tasks.length > 0">
+    <button class="task-toolbar__toggle" type="button" (click)="toggleAllTasks()">
+      {{ allTasksCompleted ? 'Mark all incomplete' : 'Mark all complete' }}
+    </button>
+  </div>
+
   <section class="task-list" aria-label="Tasks">
     <p class="task-list__empty" *ngIf="tasks.length === 0">
       No tasks yet. Add one above to get started.
@@ -61,16 +67,54 @@
             [checked]="task.completed"
             (change)="toggleTask(i)"
           />
-          <span [class.task__text--completed]="task.completed">{{ task.title }}</span>
+          <span *ngIf="editingTaskIndex !== i" [class.task__text--completed]="task.completed">
+            {{ task.title }}
+          </span>
+          <input
+            *ngIf="editingTaskIndex === i"
+            class="task__edit-input"
+            type="text"
+            [(ngModel)]="draftTaskTitle"
+            (keyup.enter)="saveEditedTask(i)"
+            (keyup.escape)="cancelEditingTask()"
+            aria-label="Edit task title"
+          />
         </label>
-        <button
-          class="task__remove"
-          type="button"
-          [attr.aria-label]="'Remove ' + task.title"
-          (click)="removeTask(i)"
-        >
-          Remove
-        </button>
+
+        <div class="task__actions">
+          <button
+            *ngIf="editingTaskIndex !== i"
+            class="task__edit"
+            type="button"
+            (click)="startEditingTask(i)"
+          >
+            Edit
+          </button>
+          <button
+            *ngIf="editingTaskIndex === i"
+            class="task__save"
+            type="button"
+            (click)="saveEditedTask(i)"
+          >
+            Save
+          </button>
+          <button
+            *ngIf="editingTaskIndex === i"
+            class="task__cancel"
+            type="button"
+            (click)="cancelEditingTask()"
+          >
+            Cancel
+          </button>
+          <button
+            class="task__remove"
+            type="button"
+            [attr.aria-label]="'Remove ' + task.title"
+            (click)="removeTask(i)"
+          >
+            Remove
+          </button>
+        </div>
       </article>
     </ng-container>
   </section>
