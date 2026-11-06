@@ -17,6 +17,18 @@
     <button type="submit">Add task</button>
   </form>
 
+  <label class="task-search" for="task-search">
+    <span class="task-search__label">Search tasks</span>
+    <input
+      id="task-search"
+      type="search"
+      [value]="searchTerm"
+      (input)="searchTerm = $any($event.target).value"
+      placeholder="Search your tasks..."
+      aria-label="Search tasks"
+    />
+  </label>
+
   <nav class="task-filters" aria-label="Filter tasks">
     <button
       type="button"
