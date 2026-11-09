@@ -163,6 +163,13 @@ export class AppComponent {
     }
   }
 
+  resetTaskList(): void {
+    this.tasks = [];
+    this.editingTask = null;
+    this.draftTaskTitle = '';
+    this.saveTasks();
+  }
+
   getPriorityLabel(priority: TaskPriority): string {
     return priority.charAt(0).toUpperCase() + priority.slice(1);
   }
