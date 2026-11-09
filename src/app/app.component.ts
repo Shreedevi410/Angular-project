@@ -5,9 +5,13 @@ import { FormsModule } from '@angular/forms';
 interface Task {
   title: string;
   completed: boolean;
+  priority: TaskPriority;
+  dueDate: string | null;
+  createdAt: number;
 }
 
 type TaskFilter = 'all' | 'active' | 'completed';
+type TaskPriority = 'low' | 'medium' | 'high';
 
 @Component({
   selector: 'app-root',
@@ -18,11 +22,54 @@ type TaskFilter = 'all' | 'active' | 'completed';
 })
 export class AppComponent {
   private readonly storageKey = 'angular-task-list.tasks';
+  readonly priorityOrder: Record<TaskPriority, number> = {
+    high: 0,
+    medium: 1,
+    low: 2,
+  };
+
   taskFilter: TaskFilter = 'all';
+  taskPriority: TaskPriority = 'medium';
+  taskDueDate = '';
   tasks: Task[] = this.loadTasks();
   searchTerm = '';
-  editingTaskIndex: number | null = null;
+  editingTask: Task | null = null;
   draftTaskTitle = '';
+
+  get sortedTasks(): Task[] {
+    return [...this.tasks].sort((firstTask, secondTask) => {
+      if (firstTask.completed !== secondTask.completed) {
+        return Number(firstTask.completed) - Number(secondTask.completed);
+      }
+
+      const priorityDifference =
+        this.priorityOrder[firstTask.priority] - this.priorityOrder[secondTask.priority];
+      if (priorityDifference !== 0) {
+        return priorityDifference;
+      }
+
+      const firstDueDate = firstTask.dueDate ?? '9999-12-31';
+      const secondDueDate = secondTask.dueDate ?? '9999-12-31';
+      return firstDueDate.localeCompare(secondDueDate);
+    });
+  }
+
+  get taskStats(): {
+    active: number;
+    completed: number;
+    dueToday: number;
+    highPriority: number;
+  } {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    return {
+      active: this.tasks.filter((task) => !task.completed).length,
+      completed: this.tasks.filter((task) => task.completed).length,
+      dueToday: this.tasks.filter((task) => this.isDueToday(task.dueDate, today)).length,
+      highPriority: this.tasks.filter((task) => task.priority === 'high' && !task.completed).length,
+    };
+  }
 
   isTaskVisible(task: Task): boolean {
     const matchesSearch = task.title
@@ -50,16 +97,21 @@ export class AppComponent {
       return;
     }
 
-    this.tasks.push({ title: trimmedTitle, completed: false });
+    this.tasks.push({
+      title: trimmedTitle,
+      completed: false,
+      priority: this.taskPriority,
+      dueDate: this.taskDueDate || null,
+      createdAt: Date.now(),
+    });
+    this.taskPriority = 'medium';
+    this.taskDueDate = '';
     this.saveTasks();
   }
 
-  toggleTask(index: number): void {
-    const task = this.tasks[index];
-    if (task) {
-      task.completed = !task.completed;
-      this.saveTasks();
-    }
+  toggleTask(task: Task): void {
+    task.completed = !task.completed;
+    this.saveTasks();
   }
 
   toggleAllTasks(): void {
@@ -71,38 +123,35 @@ export class AppComponent {
     this.saveTasks();
   }
 
-  startEditingTask(index: number): void {
-    const task = this.tasks[index];
-    if (!task) {
-      return;
-    }
-
-    this.editingTaskIndex = index;
+  startEditingTask(task: Task): void {
+    this.editingTask = task;
     this.draftTaskTitle = task.title;
   }
 
-  saveEditedTask(index: number): void {
+  saveEditedTask(task: Task): void {
     const trimmedTitle = this.draftTaskTitle.trim();
-    const task = this.tasks[index];
 
-    if (!task || !trimmedTitle) {
+    if (!trimmedTitle) {
       this.cancelEditingTask();
       return;
     }
 
     task.title = trimmedTitle;
-    this.editingTaskIndex = null;
+    this.editingTask = null;
     this.draftTaskTitle = '';
     this.saveTasks();
   }
 
   cancelEditingTask(): void {
-    this.editingTaskIndex = null;
+    this.editingTask = null;
     this.draftTaskTitle = '';
   }
 
-  removeTask(index: number): void {
-    this.tasks.splice(index, 1);
+  removeTask(task: Task): void {
+    this.tasks = this.tasks.filter((currentTask) => currentTask !== task);
+    if (this.editingTask === task) {
+      this.cancelEditingTask();
+    }
     this.saveTasks();
   }
 
@@ -112,6 +161,50 @@ export class AppComponent {
       this.tasks = remainingTasks;
       this.saveTasks();
     }
+  }
+
+  getPriorityLabel(priority: TaskPriority): string {
+    return priority.charAt(0).toUpperCase() + priority.slice(1);
+  }
+
+  getDueDateLabel(dueDate: string | null): string {
+    if (!dueDate) {
+      return '';
+    }
+
+    const parsedDate = new Date(`${dueDate}T00:00:00`);
+    if (Number.isNaN(parsedDate.getTime())) {
+      return '';
+    }
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const differenceInDays = Math.round((parsedDate.getTime() - today.getTime()) / 86400000);
+
+    if (differenceInDays === 0) {
+      return 'Due today';
+    }
+
+    if (differenceInDays > 0) {
+      return `Due in ${differenceInDays} day${differenceInDays === 1 ? '' : 's'}`;
+    }
+
+    return `${Math.abs(differenceInDays)} day${Math.abs(differenceInDays) === 1 ? '' : 's'} overdue`;
+  }
+
+  private isDueToday(dueDate: string | null, today: Date): boolean {
+    if (!dueDate) {
+      return false;
+    }
+
+    const parsedDate = new Date(`${dueDate}T00:00:00`);
+    if (Number.isNaN(parsedDate.getTime())) {
+      return false;
+    }
+
+    const dueDateValue = new Date(parsedDate); 
+    dueDateValue.setHours(0, 0, 0, 0);
+    return dueDateValue.getTime() === today.getTime();
   }
 
   private loadTasks(): Task[] {
@@ -141,14 +234,26 @@ export class AppComponent {
           'title' in task &&
           typeof task.title === 'string' &&
           'completed' in task &&
-          typeof task.completed === 'boolean',
+          typeof task.completed === 'boolean' &&
+          'priority' in task &&
+          (task.priority === 'low' || task.priority === 'medium' || task.priority === 'high') &&
+          'dueDate' in task &&
+          (typeof task.dueDate === 'string' || task.dueDate === null) &&
+          'createdAt' in task &&
+          typeof task.createdAt === 'number',
       )
     ) {
       console.error('Saved tasks in local storage have an invalid format.');
       return [];
     }
 
-    return parsedTasks;
+    return parsedTasks.map((task) => ({
+      title: task.title,
+      completed: task.completed,
+      priority: task.priority ?? 'medium',
+      dueDate: task.dueDate ?? null,
+      createdAt: task.createdAt ?? Date.now(),
+    }));
   }
 
   private saveTasks(): void {

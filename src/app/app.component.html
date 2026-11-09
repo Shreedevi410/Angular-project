@@ -5,7 +5,10 @@
     <p class="task-app__subtitle">A little progress adds up.</p>
   </header>
 
-  <form class="task-form" (submit)="$event.preventDefault(); addTask(taskInput.value); taskInput.value = ''">
+  <form
+    class="task-form"
+    (submit)="$event.preventDefault(); addTask(taskInput.value); taskInput.value = ''"
+  >
     <label class="visually-hidden" for="new-task">Add a task</label>
     <input
       #taskInput
@@ -14,8 +17,44 @@
       placeholder="What needs to get done?"
       autocomplete="off"
     />
+
+    <div class="task-form__details">
+      <label class="task-form__field" for="task-priority">
+        <span class="task-form__label">Priority</span>
+        <select id="task-priority" [(ngModel)]="taskPriority" name="taskPriority">
+          <option value="high">High</option>
+          <option value="medium">Medium</option>
+          <option value="low">Low</option>
+        </select>
+      </label>
+
+      <label class="task-form__field" for="task-due-date">
+        <span class="task-form__label">Due date</span>
+        <input id="task-due-date" type="date" [(ngModel)]="taskDueDate" name="taskDueDate" />
+      </label>
+    </div>
+
     <button type="submit">Add task</button>
   </form>
+
+  <aside class="task-insights" *ngIf="tasks.length > 0">
+    <div class="task-insight">
+      <span>Active</span>
+      <strong>{{ taskStats.active }}</strong>
+    </div>
+    <div class="task-insight">
+      <span>Completed</span>
+      <strong>{{ taskStats.completed }}</strong>
+    </div>
+    <div class="task-insight">
+      <span>Due today</span>
+      <strong>{{ taskStats.dueToday }}</strong>
+    </div>
+    <div class="task-insight task-insight--priority">
+      <span>High priority</span>
+      <strong>{{ taskStats.highPriority }}</strong>
+    </div>
+  </aside>
 
   <label class="task-search" for="task-search">
     <span class="task-search__label">Search tasks</span>
@@ -71,47 +110,58 @@
       No {{ taskFilter }} tasks.
     </p>
 
-    <ng-container *ngFor="let task of tasks; let i = index">
+    <ng-container *ngFor="let task of sortedTasks">
       <article class="task" *ngIf="isTaskVisible(task)">
         <label class="task__content">
           <input
             type="checkbox"
             [checked]="task.completed"
-            (change)="toggleTask(i)"
+            (change)="toggleTask(task)"
           />
-          <span *ngIf="editingTaskIndex !== i" [class.task__text--completed]="task.completed">
-            {{ task.title }}
-          </span>
-          <input
-            *ngIf="editingTaskIndex === i"
-            class="task__edit-input"
-            type="text"
-            [(ngModel)]="draftTaskTitle"
-            (keyup.enter)="saveEditedTask(i)"
-            (keyup.escape)="cancelEditingTask()"
-            aria-label="Edit task title"
-          />
+          <div class="task__body">
+            <span *ngIf="editingTask !== task" [class.task__text--completed]="task.completed">
+              {{ task.title }}
+            </span>
+            <input
+              *ngIf="editingTask === task"
+              class="task__edit-input"
+              type="text"
+              [(ngModel)]="draftTaskTitle"
+              (keyup.enter)="saveEditedTask(task)"
+              (keyup.escape)="cancelEditingTask()"
+              aria-label="Edit task title"
+            />
+
+            <div class="task__meta" *ngIf="editingTask !== task">
+              <span class="task__priority task__priority--{{ task.priority }}">
+                {{ getPriorityLabel(task.priority) }}
+              </span>
+              <span class="task__due-date" *ngIf="task.dueDate">
+                {{ getDueDateLabel(task.dueDate) }}
+              </span>
+            </div>
+          </div>
         </label>
 
         <div class="task__actions">
           <button
-            *ngIf="editingTaskIndex !== i"
+            *ngIf="editingTask !== task"
             class="task__edit"
             type="button"
-            (click)="startEditingTask(i)"
+            (click)="startEditingTask(task)"
           >
             Edit
           </button>
           <button
-            *ngIf="editingTaskIndex === i"
+            *ngIf="editingTask === task"
             class="task__save"
             type="button"
-            (click)="saveEditedTask(i)"
+            (click)="saveEditedTask(task)"
           >
             Save
           </button>
           <button
-            *ngIf="editingTaskIndex === i"
+            *ngIf="editingTask === task"
             class="task__cancel"
             type="button"
             (click)="cancelEditingTask()"
@@ -122,7 +172,7 @@
             class="task__remove"
             type="button"
             [attr.aria-label]="'Remove ' + task.title"
-            (click)="removeTask(i)"
+            (click)="removeTask(task)"
           >
             Remove
           </button>
