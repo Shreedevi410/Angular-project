@@ -91,6 +91,18 @@ export class AppComponent {
     return this.tasks.length > 0 && this.tasks.every((task) => task.completed);
   }
 
+  get completionPercentage(): number {
+    if (this.tasks.length === 0) {
+      return 0;
+    }
+
+    return (this.tasks.filter((task) => task.completed).length / this.tasks.length) * 100;
+  }
+
+  get remainingTasksCount(): number {
+    return this.tasks.filter((task) => !task.completed).length;
+  }
+
   addTask(title: string): void {
     const trimmedTitle = title.trim();
     if (!trimmedTitle) {
