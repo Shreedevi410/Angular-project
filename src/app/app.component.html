@@ -56,6 +56,27 @@
     </div>
   </aside>
 
+  <div
+    *ngIf="tasks.length > 0"
+    style="margin-bottom: 18px; padding: 12px 14px; border: 1px solid #edf0f5; border-radius: 12px; background: #f9faff;"
+  >
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px;">
+      <span style="color: #5a6376; font-size: 0.8rem; font-weight: 600;">Progress</span>
+      <strong style="color: #20283a; font-size: 0.9rem;">
+        {{ ((tasks.filter(task => task.completed).length / tasks.length) * 100 || 0).toFixed(0) }}%
+      </strong>
+    </div>
+    <div style="height: 10px; border-radius: 999px; background: #edf0f5; overflow: hidden;">
+      <span
+        [style.width.%]="(tasks.filter(task => task.completed).length / tasks.length) * 100 || 0"
+        style="display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #6258d9, #7c73ea); transition: width 0.2s ease;"
+      ></span>
+    </div>
+    <p style="margin: 10px 0 0; color: #677186; font-size: 0.78rem;">
+      {{ tasks.filter(task => !task.completed).length }} task(s) left to finish
+    </p>
+  </div>
+
   <label class="task-search" for="task-search">
     <span class="task-search__label">Search tasks</span>
     <input
