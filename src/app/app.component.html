@@ -16,6 +16,9 @@
       type="text"
       placeholder="What needs to get done?"
       autocomplete="off"
+      maxlength="120"
+      required
+      aria-label="Add a new task"
     />
 
     <div class="task-form__details">
@@ -34,7 +37,7 @@
       </label>
     </div>
 
-    <button type="submit">Add task</button>
+    <button type="submit" aria-label="Add the current task">Add task</button>
   </form>
 
   <aside class="task-insights" *ngIf="tasks.length > 0">
