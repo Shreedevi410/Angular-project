@@ -126,7 +126,7 @@
     </p>
 
     <p class="task-list__empty" *ngIf="tasks.length > 0 && visibleTaskCount === 0">
-      No {{ taskFilter }} tasks.
+      {{ searchTerm.trim() ? 'No tasks match your search.' : (taskFilter === 'all' ? 'No tasks found.' : 'No ' + taskFilter + ' tasks.') }}
     </p>
 
     <ng-container *ngFor="let task of sortedTasks">
