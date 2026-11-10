@@ -63,6 +63,27 @@
   width: 100%;
 }
 
+.task-form > input::placeholder,
+.task-search input::placeholder {
+  color: #8b94a7;
+}
+
+.task-form > input,
+.task-form__details input,
+.task-form__details select,
+.task-search input {
+  background: #fff;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.task-form > input:focus,
+.task-form__details input:focus,
+.task-form__details select:focus,
+.task-search input:focus {
+  border-color: #938ae9;
+  box-shadow: 0 0 0 3px rgb(98 88 217 / 12%);
+}
+
 .task-form__details {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
