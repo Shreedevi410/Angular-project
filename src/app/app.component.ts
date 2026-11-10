@@ -105,7 +105,7 @@ export class AppComponent {
 
   addTask(title: string): void {
     const trimmedTitle = title.trim();
-    if (!trimmedTitle) {
+    if (!trimmedTitle || this.hasTaskTitle(trimmedTitle)) {
       return;
     }
 
@@ -143,7 +143,7 @@ export class AppComponent {
   saveEditedTask(task: Task): void {
     const trimmedTitle = this.draftTaskTitle.trim();
 
-    if (!trimmedTitle) {
+    if (!trimmedTitle || this.hasTaskTitle(trimmedTitle, task)) {
       this.cancelEditingTask();
       return;
     }
@@ -221,9 +221,21 @@ export class AppComponent {
       return false;
     }
 
-    const dueDateValue = new Date(parsedDate); 
+    const dueDateValue = new Date(parsedDate);
     dueDateValue.setHours(0, 0, 0, 0);
     return dueDateValue.getTime() === today.getTime();
+  }
+
+  private hasTaskTitle(title: string, excludeTask?: Task): boolean {
+    const normalizedTitle = title.trim().toLowerCase();
+
+    return this.tasks.some((task) => {
+      if (excludeTask && task === excludeTask) {
+        return false;
+      }
+
+      return task.title.trim().toLowerCase() === normalizedTitle;
+    });
   }
 
   private loadTasks(): Task[] {
