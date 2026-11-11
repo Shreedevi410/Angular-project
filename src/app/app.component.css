@@ -245,6 +245,9 @@
 .task-list__empty {
   margin: 0;
   padding: 22px 0;
+  border: 1px dashed #dfe3ed;
+  border-radius: 12px;
+  background: #f9faff;
   color: #7b8498;
   text-align: center;
 }
