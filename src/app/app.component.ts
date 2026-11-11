@@ -197,8 +197,13 @@ export class AppComponent {
     }
 
     const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const differenceInDays = Math.round((parsedDate.getTime() - today.getTime()) / 86400000);
+    const todayValue = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
+    const dueDateValue = Date.UTC(
+      parsedDate.getFullYear(),
+      parsedDate.getMonth(),
+      parsedDate.getDate(),
+    );
+    const differenceInDays = (dueDateValue - todayValue) / 86400000;
 
     if (differenceInDays === 0) {
       return 'Due today';
