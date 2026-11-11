@@ -124,9 +124,20 @@
   </div>
 
   <section class="task-list" aria-label="Tasks">
-    <p class="task-list__empty" *ngIf="tasks.length === 0">
-      No tasks yet. Add one above to get started.
-    </p>
+    <div
+      class="task-list__empty"
+      *ngIf="tasks.length === 0"
+      style="text-align: center; padding: 28px 16px;"
+    >
+      <p style="margin: 0 0 12px;">No tasks yet. Add one to get started.</p>
+      <button
+        type="button"
+        (click)="taskInput.focus()"
+        style="border: 0; border-radius: 8px; padding: 9px 14px; background: #6258d9; color: #fff; font: inherit; font-weight: 600; cursor: pointer;"
+      >
+        Create your first task
+      </button>
+    </div>
 
     <p class="task-list__empty" *ngIf="tasks.length > 0 && visibleTaskCount === 0">
       {{ searchTerm.trim() ? 'No tasks match your search.' : (taskFilter === 'all' ? 'No tasks found.' : 'No ' + taskFilter + ' tasks.') }}
