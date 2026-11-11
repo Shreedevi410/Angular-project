@@ -249,6 +249,21 @@
   text-align: center;
 }
 
+.task-list__empty button {
+  transition: filter 150ms ease, transform 150ms ease, box-shadow 150ms ease;
+}
+
+.task-list__empty button:hover {
+  filter: brightness(0.94);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgb(98 88 217 / 22%);
+}
+
+.task-list__empty button:focus-visible {
+  outline: 3px solid rgb(98 88 217 / 30%);
+  outline-offset: 3px;
+}
+
 .task {
   display: flex;
   align-items: center;
@@ -425,9 +440,12 @@
     border-radius: 16px;
   }
 
-  .task-form__details,
-  .task-insights {
+  .task-form__details {
     grid-template-columns: 1fr;
+  }
+
+  .task-insights {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .task-form {
