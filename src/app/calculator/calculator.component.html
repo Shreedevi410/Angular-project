@@ -1,0 +1,29 @@
+<main class="calculator" aria-label="Calculator">
+  <h1>Calculator</h1>
+  <output class="calculator__display" aria-live="polite">{{ display }}</output>
+
+  <div class="calculator__keys">
+    <button class="calculator__utility" type="button" (click)="clear()">AC</button>
+    <button class="calculator__utility" type="button" (click)="deleteLast()" aria-label="Delete last digit">DEL</button>
+    <button class="calculator__operator" type="button" (click)="chooseOperator('÷')">÷</button>
+    <button class="calculator__operator" type="button" (click)="chooseOperator('×')">×</button>
+
+    <button type="button" (click)="appendDigit('7')">7</button>
+    <button type="button" (click)="appendDigit('8')">8</button>
+    <button type="button" (click)="appendDigit('9')">9</button>
+    <button class="calculator__operator" type="button" (click)="chooseOperator('-')">−</button>
+
+    <button type="button" (click)="appendDigit('4')">4</button>
+    <button type="button" (click)="appendDigit('5')">5</button>
+    <button type="button" (click)="appendDigit('6')">6</button>
+    <button class="calculator__operator" type="button" (click)="chooseOperator('+')">+</button>
+
+    <button type="button" (click)="appendDigit('1')">1</button>
+    <button type="button" (click)="appendDigit('2')">2</button>
+    <button type="button" (click)="appendDigit('3')">3</button>
+    <button class="calculator__equals" type="button" (click)="calculate()">=</button>
+
+    <button class="calculator__zero" type="button" (click)="appendDigit('0')">0</button>
+    <button type="button" (click)="appendDecimal()">.</button>
+  </div>
+</main>
